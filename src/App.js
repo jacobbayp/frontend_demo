@@ -64,4 +64,15 @@ function App() {
  
 }
 export default App;
- 
+/*
+const isAdmin = () => {
+  let decodedToken = tokenFacade.getDecodedToken();
+
+  if (decodedToken) {
+    let roles = decodedToken.roles.split(",");
+    return roles.includes("Admin");
+  }
+
+  return false;
+};
+*/
