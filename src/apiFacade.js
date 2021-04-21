@@ -1,4 +1,6 @@
-const URL = "http://localhost:8080/jpareststarter";
+import tokenFacade from './tokenFacade'
+import jwt_decode from "jwt-decode";
+const URL = "http://localhost:8080";
  
 function handleHttpErrors(res) {
  if (!res.ok) {
@@ -31,7 +33,30 @@ const login = (user, password) => {
       .then(res => {setToken(res.token) })
  }
 const fetchData = () => {
-    const options = makeOptions("GET",true); //True add's the token
+  const decodeToken = (token) => {
+    return jwt_decode(token, { complete: true });
+  };
+
+  let getDecodedToken = () => {
+    let token = getToken();
+
+    if (token) {
+      return decodeToken(token);
+    }
+
+    return null;
+  };
+  let tokenFinished = getDecodedToken();
+  
+    let roles = tokenFinished.roles;
+    let rolesArr = [];
+    rolesArr = roles.split(",");
+    let options = "";
+    if(rolesArr.includes("admin")){
+     options = makeOptions("GET", true); //True adds the token
+      return fetch(URL + "/api/info/admin", options).then(handleHttpErrors);
+    } else
+    options = makeOptions("GET", true); //True adds the token
     return fetch(URL + "/api/info/user", options).then(handleHttpErrors);
  }
 const makeOptions= (method,addToken,body) =>{
@@ -50,6 +75,7 @@ const makeOptions= (method,addToken,body) =>{
    }
    return opts;
  }
+
  return {
      makeOptions,
      setToken,
